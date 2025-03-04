@@ -9,9 +9,16 @@ public class Exercises {
         note: you should return the indices in ascending order and every array's solution is unique
     */
     public int[] productIndices(int[] values, int target) {
-        // todo
-        return null;
+        for (int i = 0; i < values.length; i++) {
+            for (int j = i + 1; j < values.length; j++) {
+                if (values[i] * values[j] == target) {
+                    return new int[]{i, j};
+                }
+            }
+        }
+        return new int[]{};
     }
+
 
     /*
         given a matrix of random integers, you should do spiral traversal in it
@@ -25,9 +32,41 @@ public class Exercises {
         so you should walk in that matrix in a curl and then add the numbers in order you've seen them in a 1D array
     */
     public int[] spiralTraversal(int[][] values, int rows, int cols) {
-        // todo
-        return null;
+        int[] result = new int[rows * cols];
+        int index = 0;
+
+        int top = 0, bottom = rows - 1, left = 0, right = cols - 1;
+
+        while (top <= bottom && left <= right) {
+
+            for (int i = left; i <= right; i++) {
+                result[index++] = values[top][i];
+            }
+            top++;
+
+            for (int i = top; i <= bottom; i++) {
+                result[index++] = values[i][right];
+            }
+            right--;
+
+            if (top <= bottom) {
+                for (int i = right; i >= left; i--) {
+                    result[index++] = values[bottom][i];
+                }
+                bottom--;
+            }
+
+            if (left <= right) {
+                for (int i = bottom; i >= top; i--) {
+                    result[index++] = values[i][left];
+                }
+                left++;
+            }
+        }
+
+        return result;
     }
+
 
     /*
         integer partitioning is a combinatorics problem in discreet maths
@@ -54,11 +93,70 @@ public class Exercises {
         if you're familiar with lists and arraylists, you can also edit method's body to use them instead of array
     */
     public int[][] intPartitions(int n) {
-        // todo
-        return null;
+        int maxPartitions = 100;
+        int[][] result = new int[maxPartitions][n];
+        int[] currentPartition = new int[n];
+        int partitionCount = 0;
+
+        partitionCount = findPartitions(n, 1, currentPartition, result, partitionCount);
+
+        int[][] finalResult = new int[partitionCount][];
+        for (int i = 0; i < partitionCount; i++) {
+            finalResult[i] = result[i];
+        }
+
+        return finalResult;
+    }
+
+    private int findPartitions(int n, int start, int[] currentPartition, int[][] result, int partitionCount) {
+        if (n == 0) {
+            int[] partitionCopy = new int[partitionCount];
+            System.arraycopy(currentPartition, 0, partitionCopy, 0, partitionCount);
+            result[partitionCount] = partitionCopy;
+            partitionCount++;
+            return partitionCount;
+        }
+
+        for (int i = start; i <= n; i++) {
+            currentPartition[partitionCount] = i;
+            partitionCount = findPartitions(n - i, i, currentPartition, result, partitionCount);
+        }
+
+        return partitionCount;
     }
 
     public static void main(String[] args) {
-        // you can test your code here
+        Exercises exercises = new Exercises();
+
+        System.out.println("Product Indices Test:");
+        int[] values1 = {1, 2, 3, 4};
+        int target1 = 8;
+        int[] result1 = exercises.productIndices(values1, target1);
+        System.out.println("Indices for product 8: [" + result1[0] + ", " + result1[1] + "]");
+
+        System.out.println("\nSpiral Traversal Test:");
+        int[][] matrix = {
+                {1, 2, 3},
+                {4, 5, 6},
+                {7, 8, 9}
+        };
+        int[] result2 = exercises.spiralTraversal(matrix, 3, 3);
+        System.out.print("Spiral Traversal: ");
+        for (int val : result2) {
+            System.out.print(val + " ");
+        }
+
+        System.out.println("\n\nInteger Partitions Test:");
+        int n = 4;
+        int[][] result3 = exercises.intPartitions(n);
+        System.out.println("Partitions for " + n + ":");
+        for (int[] partition : result3) {
+            for (int num : partition) {
+                if (num != 0) {
+                    System.out.print(num + " ");
+                }
+            }
+            System.out.println();
+        }
     }
 }
